@@ -18,15 +18,23 @@ ENV LD_LIBRARY_PATH="$OPENSSLDIR/lib:$LD_LIBRARY_PATH"
 #RUN ldconfig
 
 WORKDIR /root/
-RUN apk add bash gcompat
-RUN curl https://nim-lang.org/choosenim/init.sh -sSf | bash -s -- -y
-ENV PATH=/root/.nimble/bin:$PATH
+RUN apk add bash gcompat parallel
+#RUN curl https://nim-lang.org/choosenim/init.sh -sSf | bash -s -- -y
+ENV PATH=/root/nim-1.6.10/bin:$PATH
+RUN curl https://nim-lang.org/download/nim-1.6.10.tar.xz > nim-1.6.10.tar.xz && tar -Jxf nim-1.6.10.tar.xz
+WORKDIR /root/nim-1.6.10
+RUN for i in `seq 2`; do ./build.sh --parallel $(nproc); done ## i dont unsterstand why this stop-gap solution needed
+RUN ./bin/nim c koch
+RUN ./koch boot -d:release
+RUN ./koch tools
+WORKDIR /root/
 
 
 FROM alpine:latest
 ENV OPENSSLDIR=/usr/local/ssl
-COPY --from=nimbuilder /root/.nimble /root/.nimble
+COPY --from=nimbuilder /root/nim-1.6.10 /root/.nimble
 COPY --from=nimbuilder $OPENSSLDIR $OPENSSLDIR
+ENV PATH=/root/.nimble/bin:$PATH
 RUN apk add --no-cache python3 py3-setuptools py3-virtualenv php nodejs npm make git gcompat
 EXPOSE 3434
 VOLUME /data
