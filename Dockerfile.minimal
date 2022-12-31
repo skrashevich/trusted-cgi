@@ -3,7 +3,7 @@ ADD . /app
 WORKDIR /app
 RUN go mod download
 RUN make clean
-RUN make ui/dist
+RUN cd ui && npm install . && npx quasar build
 RUN make bindata
 RUN go install ./cmd/...
 
