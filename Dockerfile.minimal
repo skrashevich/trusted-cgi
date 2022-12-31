@@ -1,4 +1,4 @@
-# syntax = docker/dockerfile-upstream:master-labsFROM golang:1.18 AS builder
+# syntax = docker/dockerfile-upstream:master-labs
 FROM golang:1.18 AS builder
 ADD . /app
 WORKDIR /app
