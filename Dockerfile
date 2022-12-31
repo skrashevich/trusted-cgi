@@ -34,6 +34,7 @@ FROM golang:1.16 AS builder
 ADD . /app
 WORKDIR /app
 RUN go mod download
+RUN make bindata
 RUN go install ./cmd/...
 
 FROM alpine:latest
