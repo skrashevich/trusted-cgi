@@ -8,6 +8,7 @@ jobs:
       with:
         lfs: true
         fetch-depth: 0
+        submodules: recursive
     - name: Checkout LFS objects
       run: git lfs checkout
     - name: Pull tag
@@ -39,6 +40,7 @@ jobs:
       with:
         lfs: true
         fetch-depth: 0
+        submodules: recursive
     - name: Checkout LFS objects
       run: git lfs checkout
     - name: Pull tag
