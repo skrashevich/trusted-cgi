@@ -34,6 +34,8 @@ FROM golang:1.16 AS builder
 ADD . /app
 WORKDIR /app
 RUN go mod download
+RUN make clean
+RUN make update_ui
 RUN make bindata
 RUN go install ./cmd/...
 
