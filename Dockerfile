@@ -36,11 +36,8 @@ ADD . /app
 WORKDIR /app
 RUN apt update && apt install -y ca-certificates nodejs npm git-lfs && apt clean
 RUN update-ca-certificates
-ADD https://github.com/reddec/trusted-cgi-ui.git ui
-RUN go clean
+RUN make embed_ui
 RUN go mod download
-RUN cd ui && npm install . && npx quasar build
-RUN make bindata
 RUN go install -buildvcs=false ./cmd/...
 
 FROM alpine:latest
