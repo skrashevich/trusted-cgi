@@ -31,12 +31,13 @@ RUN ./koch tools
 WORKDIR /root/
 
 
-FROM golang:1.16 AS builder
+FROM golang:1.18 AS builder
 ADD . /app
 WORKDIR /app
-RUN apt update && apt install -y --no-install-recommends ca-certificates nodejs npm && apt clean
+RUN apt update && apt install -y ca-certificates nodejs npm git-lfs && apt clean
 RUN update-ca-certificates
 ADD https://github.com/reddec/trusted-cgi-ui.git ui
+RUN go clean
 RUN go mod download
 RUN cd ui && npm install . && npx quasar build
 RUN make bindata
