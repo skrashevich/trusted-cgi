@@ -1,3 +1,4 @@
+# syntax = docker/dockerfile-upstream:master-labs
 FROM alpine:latest as nimbuilder
 
 #RUN apt-get update && apt-get install -y curl xz-utils g++ git make
@@ -35,8 +36,8 @@ ADD . /app
 WORKDIR /app
 RUN apt update && apt install -y --no-install-recommends ca-certificates nodejs npm && apt clean
 RUN update-ca-certificates
+ADD https://github.com/reddec/trusted-cgi-ui.git ui
 RUN go mod download
-RUN make clean
 RUN cd ui && npm install . && npx quasar build
 RUN make bindata
 RUN go install ./cmd/...
