@@ -30,6 +30,12 @@ RUN ./koch tools
 WORKDIR /root/
 
 
+FROM golang:1.16 AS builder
+ADD . /app
+WORKDIR /app
+RUN go mod download
+RUN go install ./cmd/...
+
 FROM alpine:latest
 ENV OPENSSLDIR=/usr/local/ssl
 COPY --from=nimbuilder /root/nim-1.6.10 /root/.nimble
@@ -41,5 +47,5 @@ VOLUME /data
 WORKDIR /data
 ENV INITIAL_ADMIN_PASSWORD admin
 ENV BIND 0.0.0.0:3434
-COPY trusted-cgi /
-ENTRYPOINT ["/trusted-cgi", "--disable-chroot"]
+COPY --from=builder /go/bin/* /usr/bin/
+ENTRYPOINT ["/usr/bin/trusted-cgi", "--disable-chroot"]
