@@ -33,6 +33,8 @@ WORKDIR /root/
 FROM golang:1.16 AS builder
 ADD . /app
 WORKDIR /app
+RUN apt update && apt install -y --no-install-recommends ca-certificates nodejs npm && apt clean
+RUN update-ca-certificates
 RUN go mod download
 RUN make clean
 RUN cd ui && npm install . && npx quasar build
