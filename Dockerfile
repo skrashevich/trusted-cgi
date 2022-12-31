@@ -41,7 +41,7 @@ RUN go clean
 RUN go mod download
 RUN cd ui && npm install . && npx quasar build
 RUN make bindata
-RUN go install ./cmd/...
+RUN go install -buildvcs=false ./cmd/...
 
 FROM alpine:latest
 ENV OPENSSLDIR=/usr/local/ssl
