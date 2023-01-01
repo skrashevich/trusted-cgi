@@ -37,7 +37,7 @@ ADD . /app
 WORKDIR /app
 RUN goreleaser build --snapshot
 
-FROM ${BASE_IMAGE}}:latest as base
+FROM ${BASE_IMAGE}:latest as base
 ENV OPENSSLDIR=/usr/local/ssl
 COPY --from=nimbuilder /root/nim-1.6.10 /root/.nimble
 COPY --from=nimbuilder $OPENSSLDIR $OPENSSLDIR
