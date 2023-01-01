@@ -1,4 +1,6 @@
 # syntax = docker/dockerfile-upstream:master-labs
+ARG BASE_IMAGE=alpine
+
 FROM alpine:latest as nimbuilder
 
 #RUN apt-get update && apt-get install -y curl xz-utils g++ git make
@@ -30,26 +32,33 @@ RUN ./koch boot -d:release
 RUN ./koch tools
 WORKDIR /root/
 
-
-FROM golang:1.18 AS builder
+FROM --platform=$BUILDPLATFORM goreleaser/goreleaser:latest as goreleaser
 ADD . /app
 WORKDIR /app
-RUN apt update && apt install -y ca-certificates nodejs npm git-lfs && apt clean
-RUN update-ca-certificates
-RUN make embed_ui
-RUN go mod download
-RUN go install -buildvcs=false ./cmd/...
+RUN goreleaser build --snapshot
 
-FROM alpine:latest
+FROM ${BASE_IMAGE}}:latest as base
 ENV OPENSSLDIR=/usr/local/ssl
 COPY --from=nimbuilder /root/nim-1.6.10 /root/.nimble
 COPY --from=nimbuilder $OPENSSLDIR $OPENSSLDIR
 ENV PATH=/root/.nimble/bin:$PATH
-RUN apk add --no-cache python3 py3-setuptools py3-virtualenv php nodejs npm make git gcompat bash
+RUN apk add --no-cache python3 py3-setuptools py3-virtualenv php nodejs npm make git gcompat
+
+FROM base
+ARG TARGETPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
+ARG TARGETVARIANT
+RUN printf "I'm building for TARGETPLATFORM=${TARGETPLATFORM}" \
+    && printf ", TARGETARCH=${TARGETARCH}" \
+    && printf ", TARGETVARIANT=${TARGETVARIANT} \n" \
+    && printf "With uname -s : " && uname -s \
+    && printf "and  uname -m : " && uname -mm
 EXPOSE 3434
 VOLUME /data
 WORKDIR /data
 ENV INITIAL_ADMIN_PASSWORD admin
 ENV BIND 0.0.0.0:3434
-COPY --from=builder /go/bin/* /usr/bin/
+COPY --from=goreleaser /app/dist/server_${TARGETOS}_${TARGETARCH}*${TARGETVARIANT}/trusted-cgi /usr/bin/
+COPY --from=goreleaser /app/dist/client_${TARGETOS}_${TARGETARCH}*${TARGETVARIANT}/cgi-ctl /usr/bin/
 ENTRYPOINT ["/usr/bin/trusted-cgi", "--disable-chroot"]
