@@ -45,7 +45,7 @@ ENV OPENSSLDIR=/usr/local/ssl
 COPY --from=nimbuilder /root/nim-1.6.10 /root/.nimble
 COPY --from=nimbuilder $OPENSSLDIR $OPENSSLDIR
 ENV PATH=/root/.nimble/bin:$PATH
-RUN apk add --no-cache python3 py3-setuptools py3-virtualenv php nodejs npm make git gcompat
+RUN apk add --no-cache python3 py3-setuptools py3-virtualenv php nodejs npm make git gcompat bash
 EXPOSE 3434
 VOLUME /data
 WORKDIR /data
