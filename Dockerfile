@@ -51,7 +51,7 @@ VOLUME /data
 WORKDIR /data
 ENV INITIAL_ADMIN_PASSWORD admin
 ENV BIND 0.0.0.0:3434
-ADD bin /usr/bin/
+COPY bin/* /usr/bin/
 ENTRYPOINT ["/usr/bin/trusted-cgi", "--disable-chroot"]
 
 FROM base

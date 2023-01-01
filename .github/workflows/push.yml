@@ -67,6 +67,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         file: ${{ matrix.target }}
+        context: .
         target: actions
         push: true
         tags: ghcr.io/${{ github.actor }}/trusted-cgi:${{ matrix.tag }}
