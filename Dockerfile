@@ -44,6 +44,16 @@ COPY --from=nimbuilder $OPENSSLDIR $OPENSSLDIR
 ENV PATH=/root/.nimble/bin:$PATH
 RUN apk add --no-cache python3 py3-setuptools py3-virtualenv php nodejs npm make git gcompat
 
+
+FROM base as actions
+EXPOSE 3434
+VOLUME /data
+WORKDIR /data
+ENV INITIAL_ADMIN_PASSWORD admin
+ENV BIND 0.0.0.0:3434
+COPY bin/* /usr/bin/
+ENTRYPOINT ["/usr/bin/trusted-cgi", "--disable-chroot"]
+
 FROM base
 ARG TARGETPLATFORM
 ARG TARGETOS

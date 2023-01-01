@@ -4,6 +4,15 @@ ADD . /app
 WORKDIR /app
 RUN goreleaser build --snapshot
 
+FROM alpine:latest as actions
+EXPOSE 3434
+VOLUME /data
+WORKDIR /data
+ENV INITIAL_ADMIN_PASSWORD admin
+ENV BIND 0.0.0.0:3434
+COPY bin/* /usr/bin/
+ENTRYPOINT ["/usr/bin/trusted-cgi", "--disable-chroot"]
+
 FROM alpine:latest
 ARG TARGETPLATFORM
 ARG TARGETOS
