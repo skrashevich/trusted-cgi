@@ -53,14 +53,14 @@ jobs:
       uses: goreleaser/goreleaser-action@v2
       with:
         version: latest
-        args: build --rm-dist --snapshot --id server --single-target -o bin/
+        args: build --rm-dist --snapshot --id server --single-target -o ./cgi-ctl
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Run GoReleaser for Client
       uses: goreleaser/goreleaser-action@v2
       with:
         version: latest
-        args: build --rm-dist --snapshot --id client --single-target -o bin/
+        args: build --rm-dist --snapshot --id client --single-target -o ./trusted-cgi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Build and push
