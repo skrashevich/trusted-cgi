@@ -10,7 +10,8 @@ VOLUME /data
 WORKDIR /data
 ENV INITIAL_ADMIN_PASSWORD admin
 ENV BIND 0.0.0.0:3434
-COPY bin/* /usr/bin/
+ADD trusted-cgi /usr/bin/
+ADD cgi-ctl /usr/bin/
 ENTRYPOINT ["/usr/bin/trusted-cgi", "--disable-chroot"]
 
 FROM alpine:latest
