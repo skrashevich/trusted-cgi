@@ -53,14 +53,14 @@ jobs:
       uses: goreleaser/goreleaser-action@v2
       with:
         version: latest
-        args: build --rm-dist --snapshot --id server --single-target -o ./cgi-ctl
+        args: build --rm-dist --snapshot --id server --single-target -o ./trusted-cgi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Run GoReleaser for Client
       uses: goreleaser/goreleaser-action@v2
       with:
         version: latest
-        args: build --rm-dist --snapshot --id client --single-target -o ./trusted-cgi
+        args: build --rm-dist --snapshot --id client --single-target -o ./cgi-ctl
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Build and push
@@ -72,3 +72,5 @@ jobs:
         push: true
         tags: ghcr.io/${{ github.actor }}/trusted-cgi:${{ matrix.tag }}
         platforms: ${{ matrix.platform }}
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
