@@ -30,6 +30,7 @@ RUN for i in `seq 2`; do ./build.sh --parallel $(nproc); done ## i dont unsterst
 RUN ./bin/nim c koch
 RUN ./koch boot -d:release
 RUN ./koch tools
+RUN rm -rf c_code nimcache/* /usr/local/ssl/src/.git
 WORKDIR /root/
 
 FROM --platform=$BUILDPLATFORM goreleaser/goreleaser:latest as goreleaser
